@@ -12,7 +12,6 @@ class Difference_of_Gaussian(object):
 
     def get_keypoints(self, image):
 
-        ### TODO ####
         # Step 1: Filter images with different sigma values (5 images per octave, 2 octave in total)
         # - Function: cv2.GaussianBlur (kernel = (0, 0), sigma = self.sigma**___)
         octaves = []
