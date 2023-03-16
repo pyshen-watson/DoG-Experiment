@@ -53,12 +53,36 @@ class Difference_of_Gaussian(object):
             dog_array = np.array(dog_list)
             dog_arrays.append(dog_array)
 
-        print(dog_arrays[0].shape)
-        print(dog_arrays[1].shape)
-
         # Step 3: Thresholding the value and Find local extremum (local maximun and local minimum)
         #         Keep local extremum as a keypoint
 
+        keypoints = np.zeros((0,2)).astype(np.int32)
+
+        # Each dog_array is an octave
+        for i, dog_array in enumerate(dog_arrays):
+            for layer in range(dog_array.shape[0]):
+                for row in range(dog_array.shape[1]):
+                    for col in range(dog_array.shape[2]):
+
+                        # Skip the DoG value less than threshold
+                        if abs(dog_array[layer, row, col]) <= self.threshold:
+                            continue
+
+                        cube = dog_array[layer-1:layer+2, row-1:row+2, col-1:col+2]
+
+                        # If the cube out of index, numpy won't raise an error but a incomplete ndarray
+                        if cube.size != 27:
+                            continue
+
+                        local_max = np.max(cube)
+                        local_min = np.min(cube)
+                        cur_value = dog_array[layer, row, col]
+
+                        if cur_value == local_max or cur_value == local_min:
+
+                            # The keypoints found in i-th octave are scaled by 2^i
+                            kp = np.array([row * 2**i, col * 2**i]).astype(np.int32)
+                            keypoints = np.append(keypoints, [kp], axis=0)
 
         # Step 4: Delete duplicate keypoints
         # - Function: np.unique
