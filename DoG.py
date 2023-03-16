@@ -86,9 +86,12 @@ class Difference_of_Gaussian(object):
 
         # Step 4: Delete duplicate keypoints
         # - Function: np.unique
+        keypoints = np.unique(keypoints, axis=0)
 
+        # sort 2d-point by y, then by x
+        keypoints = keypoints[np.lexsort((keypoints[:,1],keypoints[:,0]))]
 
-        return
+        return keypoints
 
 if __name__ == '__main__':
 
