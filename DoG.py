@@ -53,6 +53,8 @@ class Difference_of_Gaussian(object):
             dog_array = np.array(dog_list)
             dog_arrays.append(dog_array)
 
+        self.dog_arrays = dog_arrays
+
         # Step 3: Thresholding the value and Find local extremum (local maximun and local minimum)
         #         Keep local extremum as a keypoint
 
@@ -93,12 +95,34 @@ class Difference_of_Gaussian(object):
 
         return keypoints
 
+    def get_dog_images(self, image):
+
+        # self.dog_arrays is obtained from get_keypoints()
+        if 'dog_arrays' not in self.__dict__:
+            _ = self.get_keypoints(image)
+
+        # Map real number to 0-255
+        def normalize_image(img):
+            Max = np.max(img)
+            Min = np.min(img)
+            norm = (img-Min) / (Max-Min) * 255
+            return norm.astype(np.uint8)
+
+        dog_images = dict()
+
+        for octave in range(self.num_octaves):
+            for dog in range(self.num_DoG_images_per_octave):
+                norm = normalize_image(self.dog_arrays[octave][dog])
+                dog_images.setdefault(f'output/DoG{octave+1}-{dog+1}.png', norm)
+
+        return dog_images
+
+
 if __name__ == '__main__':
 
     img = cv2.imread('./testdata/1.png', 0).astype(np.float64)
 
-    # create DoG class
     DoG = Difference_of_Gaussian(3.0)
 
-    # find keypoint from DoG and sort it
     keypoints = DoG.get_keypoints(img)
+    DoG.get_dog_images(img)
