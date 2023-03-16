@@ -15,7 +15,32 @@ class Difference_of_Gaussian(object):
         ### TODO ####
         # Step 1: Filter images with different sigma values (5 images per octave, 2 octave in total)
         # - Function: cv2.GaussianBlur (kernel = (0, 0), sigma = self.sigma**___)
+        octaves = []
+        base_image = np.copy(image)
 
+        for _ in range(self.num_octaves):
+
+            # Put the base image of each octave at first.
+            octave = [base_image]
+
+            for level in range(1,self.num_guassian_images_per_octave):
+
+                sigma = self.sigma ** level
+
+                # Push the blurred image into octave
+                blurred_image = cv2.GaussianBlur(
+                    src=base_image, ksize=(0,0), sigmaX=sigma, sigmaY=sigma)
+
+                octave.append(blurred_image)
+
+                # The base image in next octave is the half of the last blurred image
+                if len(octave) == self.num_guassian_images_per_octave:
+
+                    new_height, new_width = blurred_image.shape[0] // 2, blurred_image.shape[1] // 2
+                    base_image = cv2.resize(
+                        blurred_image, (new_width, new_height), interpolation=cv2.INTER_NEAREST)
+
+            octaves.append(octave)
         # Step 2: Subtract 2 neighbor images to get DoG images (4 images per octave, 2 octave in total)
         # - Function: cv2.subtract(second_image, first_image)
 
