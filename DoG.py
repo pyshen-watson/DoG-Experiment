@@ -112,6 +112,6 @@ class Difference_of_Gaussian(object):
         for octave in range(self.num_octaves):
             for dog in range(self.num_DoG_images_per_octave):
                 norm = normalize_image(self.dog_arrays[octave][dog])
-                dog_images.setdefault(f'output/DoG{octave+1}-{dog+1}.png', norm)
+                dog_images.setdefault(f'DoG{octave+1}-{dog+1}.png', norm)
 
         return dog_images
