@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 
-
 class Difference_of_Gaussian(object):
+
     def __init__(self, threshold):
         self.threshold = threshold
         self.sigma = 2**(1/4)
@@ -115,13 +115,3 @@ class Difference_of_Gaussian(object):
                 dog_images.setdefault(f'output/DoG{octave+1}-{dog+1}.png', norm)
 
         return dog_images
-
-
-if __name__ == '__main__':
-
-    img = cv2.imread('./testdata/1.png', 0).astype(np.float64)
-
-    DoG = Difference_of_Gaussian(3.0)
-
-    keypoints = DoG.get_keypoints(img)
-    DoG.get_dog_images(img)
